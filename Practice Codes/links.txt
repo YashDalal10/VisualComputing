@@ -1,0 +1,1 @@
+Link for isomap_practice.ipynb - https://towardsdatascience.com/isomap-embedding-an-awesome-approach-to-non-linear-dimensionality-reduction-fc7efbca47a0
