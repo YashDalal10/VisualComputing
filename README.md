@@ -8,3 +8,6 @@ https://blog.paperspace.com/dimension-reduction-with-isomap/
 Sklearn links -
 https://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne
 https://scikit-learn.org/stable/modules/generated/sklearn.manifold.Isomap.html
+
+
+Excited to start!!
