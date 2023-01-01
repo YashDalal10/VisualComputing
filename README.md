@@ -2,7 +2,8 @@
 Visual Computing project on Dimensionality reduction
 
 Book on using C++ libraries for dimension reduction -
-https://library.samdu.uz/files/5ee745f9fcc8fdad334dee6c41259650_Hands-On-Machine-Learning-with-CPP.pdf
+https://library.samdu.uz/files/5ee745f9fcc8fdad334dee6c41259650_Han
+ds-On-Machine-Learning-with-CPP.pdf
 
 Links for Isomap algorithm explaination-
 https://towardsdatascience.com/isomap-embedding-an-awesome-approach-to-non-linear-dimensionality-reduction-fc7efbca47a0
