@@ -4,17 +4,15 @@ from sklearn.manifold import Isomap, TSNE
 from sklearn.decomposition import PCA
 import sklearn
 import plotly.express as px
-from sklearn.datasets import load_digits
 import PySimpleGUI as sg
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
-X,y = load_digits(return_X_y = True)
-X.shape, y.shape
 
-input_file = [[sg.Text("Choose a file: "), sg.Input(), ]]
+layout_file = [[sg.T("")], [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key = "-IN-"), sg.Button("Submit")]]
 
 layout_algo = [
+    # [[sg.T("")], [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key = "-IN-")]],
     [sg.Text('Isomap algorithm requires follwoing parameters - ')],
     [sg.Text('Number of neighbors (default=5)'), sg.InputText()],
     [sg.Text('Number of dimensions (can take only 2 or 3)'), sg.InputText()],
@@ -27,11 +25,20 @@ layout_algo = [
     [sg.Button('Reduce and Plot')]
 ]
 
+window_file = sg.Window('File', layout_file)
 window_algo = sg.Window('Parameters', layout_algo)
 while True:
+    event_file, values_file = window_file.read()
+    if event_file == sg.WIN_CLOSED:
+        break
+    data = pd.read_csv(values_file["-IN-"])
+    print(data.head())
+
     event_algo, values_algo = window_algo.read()
     if event_algo == sg.WIN_CLOSED:
         break
+    # data = pd.read_csv(values_algo["-IN-"])
+    # print(data.head())
     print('Isomap Nearest Neighbors: ', values_algo[0])
     print('Isomap no of dimensions to reduce to: ', values_algo[1])
     print('TSNE Nearest Neighbors: ', values_algo[2])
@@ -45,6 +52,10 @@ while True:
     iter_tsne = int(values_algo[4])
     dim_pca = int(values_algo[5])
 
+    X = data[data.columns[:-1]]
+    y = data[data.columns[-1]]
+    print("Shape of the matrix with independent variables: ",X.shape)
+    print("Shape of the matrix with dependent variable", y.shape)
 
     if dim_iso != dim_tsne or dim_iso != dim_pca:
         print('Error')
@@ -82,7 +93,7 @@ while True:
                             height=700, width=700, title = 'PCA 3D'
                         )
 
-        fig_tsne.update_traces(marker=dict(size=3))
+        fig_pca.update_traces(marker=dict(size=3))
 
 
     elif dim_iso == 2 and dim_tsne == 2 and dim_pca == 2:
@@ -109,7 +120,7 @@ while True:
                             height=600, width=600, title = 'PCA 2D'
                         )
 
-        fig_tsne.update_traces(marker=dict(size=1))
+        fig_pca.update_traces(marker=dict(size=1))
 
 
     else:
@@ -118,7 +129,9 @@ while True:
 app = Dash(__name__)
 
 app.layout = html.Div([
-    html.H1("Dimension Reduction"),
+    html.Div(children = [
+        html.H1("VISUALIZATION OF DIMENSION REDUCTION TECHNIQUES", style={'color':'navy', 'textAlign':'center'}),
+    ]),
     html.Div(className='row', children=[
         dcc.Graph(id="isomap", figure = fig_iso, style={'display': 'inline-block', 'width': '40%', 'height': '40%'}),
         dcc.Graph(id="tsne", figure = fig_tsne, style={'display': 'inline-block','width': '40%', 'height': '40%'})
