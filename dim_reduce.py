@@ -8,6 +8,7 @@ import PySimpleGUI as sg
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
+sg.theme('DarkBlue2')
 
 layout_file = [[sg.T("")], [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key = "-IN-"), sg.Button("Submit")]]
 
@@ -32,6 +33,7 @@ while True:
     if event_file == sg.WIN_CLOSED:
         break
     data = pd.read_csv(values_file["-IN-"])
+    filename = str(values_file["-IN-"])
     print(data.head())
 
     event_algo, values_algo = window_algo.read()
@@ -39,18 +41,24 @@ while True:
         break
     # data = pd.read_csv(values_algo["-IN-"])
     # print(data.head())
+    if values_algo[0] == '':
+        values_algo[0] = 5
+    neighbors_iso = int(values_algo[0])
+    dim_iso = int(values_algo[1])
+    if values_algo[2] == '':
+        values_algo[2] = 30
+    neighbors_tsne = int(values_algo[2])
+    dim_tsne = int(values_algo[3])
+    if values_algo[4] == '':
+        values_algo[4] = 1000
+    iter_tsne = int(values_algo[4])
+    dim_pca = int(values_algo[5])
     print('Isomap Nearest Neighbors: ', values_algo[0])
     print('Isomap no of dimensions to reduce to: ', values_algo[1])
     print('TSNE Nearest Neighbors: ', values_algo[2])
     print('TSNE no of dimensions to reduce to: ', values_algo[3])
     print('TSNE no of iterations: ', values_algo[4])
     print('PCA no of dimensions to reduce to: ', values_algo[5])
-    neighbors_iso = int(values_algo[0])
-    dim_iso = int(values_algo[1])
-    neighbors_tsne = int(values_algo[2])
-    dim_tsne = int(values_algo[3])
-    iter_tsne = int(values_algo[4])
-    dim_pca = int(values_algo[5])
 
     X = data[data.columns[:-1]]
     y = data[data.columns[-1]]
@@ -131,9 +139,10 @@ app = Dash(__name__)
 app.layout = html.Div([
     html.Div(children = [
         html.H1("VISUALIZATION OF DIMENSION REDUCTION TECHNIQUES", style={'color':'navy', 'textAlign':'center'}),
+        html.H3(filename, style = {'color':'black', 'textAlign': 'center'})
     ]),
     html.Div(className='row', children=[
-        dcc.Graph(id="isomap", figure = fig_iso, style={'display': 'inline-block', 'width': '40%', 'height': '40%'}),
+        dcc.Graph(id="isomap", figure = fig_iso, style={'display': 'inline-block', 'width': '50%', 'height': '50%'}),
         dcc.Graph(id="tsne", figure = fig_tsne, style={'display': 'inline-block','width': '40%', 'height': '40%'})
     ]),
     html.Div(className='row', children=[
