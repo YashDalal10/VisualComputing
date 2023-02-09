@@ -1,46 +1,69 @@
+
+"""
+
+Import the necessary packages required to build the app
+
+"""
 import pandas as pd
 import numpy as np
+import sklearn
 from sklearn.manifold import Isomap, TSNE
 from sklearn.decomposition import PCA
-import sklearn
 import plotly.express as px
-import PySimpleGUI as sg
+import PySimpleGUI as gui
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
-sg.theme('DarkBlue2')
+"""
 
-layout_file = [[sg.T("")], [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key = "-IN-"), sg.Button("Submit")]]
+Set theme color for the prompts.
+A prompt made is available to the user to get the input file to visualize with the variable layout_file.
+A prompt to enter the various parameters related to the dimensionality reduction algorithm is made
+available to the user via layout_algo.
+Display the prompts with window_file and window_algo.
+
+"""
+
+gui.theme('DarkBlue2')
+
+layout_file = [[gui.T("")], [gui.Text("Choose a file: "), gui.Input(), gui.FileBrowse(key = "-IN-"), gui.Button("Submit")]]
 
 layout_algo = [
-    # [[sg.T("")], [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key = "-IN-")]],
-    [sg.Text('Isomap algorithm requires follwoing parameters - ')],
-    [sg.Text('Number of neighbors (default=5)'), sg.InputText()],
-    [sg.Text('Number of dimensions (can take only 2 or 3)'), sg.InputText()],
-    [sg.Text('TSNE algorithm requires follwoing parameters - ')],
-    [sg.Text('Perplexity (no of neighbors) (default=30.0)'), sg.InputText()],
-    [sg.Text('Number of dimensions (can take only 2 or 3)'), sg.InputText()],
-    [sg.Text('Number of iterations (default 1000)'), sg.InputText()],
-    [sg.Text('PCA algorithm requires follwoing parameters - ')],
-    [sg.Text('Number of dimensions (can take only 2 or 3)'), sg.InputText()],
-    [sg.Button('Reduce and Plot')]
+    [gui.Text('Isomap algorithm requires follwoing parameters - ')],
+    [gui.Text('Number of neighbors (default=5)'), gui.InputText()],
+    [gui.Text('Number of dimensions (can take only 2 or 3)'), gui.InputText()],
+    [gui.Text('TSNE algorithm requires follwoing parameters - ')],
+    [gui.Text('Perplexity (no of neighbors) (default=30.0)'), gui.InputText()],
+    [gui.Text('Number of dimensions (can take only 2 or 3)'), gui.InputText()],
+    [gui.Text('Number of iterations (default 1000)'), gui.InputText()],
+    [gui.Text('PCA algorithm requires follwoing parameters - ')],
+    [gui.Text('Number of dimensions (can take only 2 or 3)'), gui.InputText()],
+    [gui.Button('Reduce and Plot')]
 ]
 
-window_file = sg.Window('File', layout_file)
-window_algo = sg.Window('Parameters', layout_algo)
+window_file = gui.Window('File', layout_file)
+window_algo = gui.Window('Parameters', layout_algo)
+
+
 while True:
-    event_file, values_file = window_file.read()
-    if event_file == sg.WIN_CLOSED:
+
+    """
+    Get the values from the prompt entered by the user.
+    Assign the values from the prompt to the variables.
+    If no input was given by the user then use default values.
+
+    """
+    get_event, get_values = window_file.read()
+    if get_event == gui.WIN_CLOSED:
         break
-    data = pd.read_csv(values_file["-IN-"])
-    filename = str(values_file["-IN-"])
+    data = pd.read_csv(get_values["-IN-"])
+    filename = str(get_values["-IN-"])
     print(data.head())
 
     event_algo, values_algo = window_algo.read()
-    if event_algo == sg.WIN_CLOSED:
+    if event_algo == gui.WIN_CLOSED:
         break
-    # data = pd.read_csv(values_algo["-IN-"])
-    # print(data.head())
+
     if values_algo[0] == '':
         values_algo[0] = 5
     neighbors_iso = int(values_algo[0])
@@ -65,6 +88,13 @@ while True:
     print("Shape of the matrix with independent variables: ",X.shape)
     print("Shape of the matrix with dependent variable", y.shape)
 
+    """
+    If condition to check if the dimensions entered of all the three algorithms are the same.
+    If not same print " Error".
+    If same proceed to fit the dimensionality reduction algorithms on the data.
+
+    """
+
     if dim_iso != dim_tsne or dim_iso != dim_pca:
         print('Error')
 
@@ -76,6 +106,13 @@ while True:
 
     pca = PCA(n_components = dim_pca)
     X_trans_pca = pca.fit_transform(X)
+
+    """
+    If condition to check if the dimensions of all the three algorithms.
+    If the dimension is 3, proceed to plot a scatter plot of the reduced data for the algorithms.
+    If the dimension is 2, proceed to plot a scatter plot of the reduced data for the algorithms.
+    If dimension is not 3 or 2 , print message " Dimension can be only 2 or 3 "
+    """
 
     if dim_iso == 3 and dim_tsne == 3 and dim_pca == 3:
     # Create a 3D scatter plot
@@ -133,6 +170,12 @@ while True:
 
     else:
         print("Dimension can be only 2 or 3")
+
+"""
+Create a dash application to visualize results.
+Have three divisions to view the results of the three algorithms. 
+
+"""
 
 app = Dash(__name__)
 
