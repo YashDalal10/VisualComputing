@@ -5,12 +5,12 @@
 The project requires Python 3.10 and above
 
 Install the necessary packages:
-Numpy 
-Pandas
-Dash
-Plotly
-PySimpleGUI
-Scikit-learn
+Numpy, 
+Pandas,
+Dash,
+Plotly,
+PySimpleGUI,
+Scikit-learn.
 
 You can use " pip install -package name " to install the packages.
 
