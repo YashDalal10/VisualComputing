@@ -2,7 +2,7 @@
 
 ### USER MANUAL
 
-The project requires Pythom 3.10 and above
+The project requires Python 3.10 and above
 
 Install the necessary packages:
 Numpy 
